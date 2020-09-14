@@ -1,6 +1,6 @@
 {
-  "name": "ganache-cli",
-  "version": "6.10.1",
+  "name": "@clearmatics/ganache-cli",
+  "version": "6.10.1-clearmatics",
   "bin": {
     "ganache-cli": "cli.js"
   },
@@ -12,6 +12,9 @@
     "docker": "docker build -t trufflesuite/ganache-cli . && docker run -p 8545:8545 trufflesuite/ganache-cli",
     "otp": "node ./scripts/generate-otp.js",
     "releaseNotes": "npx semantic-release --dry-run"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   },
   "dependencies": {
     "ethereumjs-util": "6.1.0",
@@ -44,7 +47,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/trufflesuite/ganache-cli"
+    "url": "https://github.com/clearmatics/ganache-cli"
   },
   "license": "MIT",
   "release": {
