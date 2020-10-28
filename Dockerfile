@@ -1,10 +1,27 @@
 FROM mhart/alpine-node:10 as builder
 
-RUN apk add --no-cache make gcc g++ python git bash
+RUN apk --update --no-cache add \
+    make \
+    gcc \
+    g++ \
+    python \
+    git \
+    bash \
+    cmake \
+    libressl-dev \
+    gmp-dev \
+    procps-dev \
+    pkgconfig \
+    build-base \
+    boost-dev \
+    libxslt-dev \
+    rsync
+
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
 WORKDIR /app
 RUN npm install
+
 COPY . .
 RUN npx webpack-cli --config ./webpack/webpack.docker.config.js
 
