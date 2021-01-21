@@ -308,20 +308,5 @@ docker build -t clearmatics/ganache-cli-rnd .
 docker run -p 8545:8545 clearmatics/ganache-cli-rnd
 ```
 
-## Contributing to Ganache CLI
-
-The Ganache CLI repository contains the cli logic and Docker config/build only. It utilizes [ganache-core](https://github.com/trufflesuite/ganache-core), the core logic powering [Ganache](https://github.com/trufflesuite/ganache), internally.
-
-You can contribute to the core code at [ganache-core](https://github.com/trufflesuite/ganache-core).
-
-To contribue to ganache-cli, run:
-
-```Bash
-git clone https://github.com/trufflesuite/ganache-cli.git && cd ganache-cli
-npm install
-```
-
-You'll need Python 2.7 installed, and on Windows, you'll likely need to install [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) from an Administrator PowerShell Prompt via `npm install --global windows-build-tools`.
-
 # License
 [MIT](https://tldrlegal.com/license/mit-license)
