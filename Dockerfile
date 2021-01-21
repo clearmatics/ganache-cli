@@ -42,4 +42,5 @@ ENV DOCKER true
 
 EXPOSE 8545
 
+# Further flags can be passed when starting the container (see README.md)
 ENTRYPOINT ["node", "cli.js"]
