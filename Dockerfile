@@ -11,16 +11,13 @@ RUN apk --update --no-cache add \
     libressl-dev \
     gmp-dev \
     procps-dev \
-    pkgconfig \
-    build-base \
-    boost-dev \
-    libxslt-dev \
     rsync
 
 WORKDIR /app
 COPY . .
 
 # See: https://github.com/npm/npm/issues/17346
+# and https://stackoverflow.com/a/52767310
 RUN npm config set unsafe-perm true && npm install
 RUN npx webpack-cli --config ./webpack/webpack.docker.config.js
 
