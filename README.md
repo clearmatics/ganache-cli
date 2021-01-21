@@ -284,54 +284,29 @@ Special non-standard methods that aren’t included within the original RPC spec
 The Simplest way to get started with the Docker image:
 
 ```Bash
-docker run -d -p 8545:8545 trufflesuite/ganache-cli:latest
+docker run -d -p 8545:8545 clearmatics/ganache-cli-rnd:latest
 ```
 
 To pass options to ganache-cli through Docker simply add the arguments to
-the run command:
+the run command, e.g.:
 
 ```Bash
-docker run -d -p 8545:8545 trufflesuite/ganache-cli:latest -a 10 --debug
-                                                           ^^^^^^^^^^^^^
+docker run -d -p 8545:8545 clearmatics/ganache-cli-rnd:latest --hardfork istanbul --gasLimit 0x3FFFFFFFFFFFF --gasPrice 1 --defaultBalanceEther 9000000000
 ```
 
 The Docker container adds an environment variable `DOCKER=true`; when this variable is set to `true` (case insensitive), `ganache-cli` use a default hostname IP of `0.0.0.0` instead of the normal default `127.0.0.1`. You can still specify a custom hostname however:
 
 ```Bash
-docker run -d -p 8545:8545 trufflesuite/ganache-cli:latest -h XXX.XXX.XXX.XXX
-                                                           ^^^^^^^^^^^^^^^^^^
+docker run -d -p 8545:8545 clearmatics/ganache-cli-rnd:latest -h XXX.XXX.XXX.XXX
+                                                              ^^^^^^^^^^^^^^^^^^
 ```
 
 To build and run the Docker container from source:
 
 ```Bash
-git clone https://github.com/trufflesuite/ganache-cli.git && cd ganache-cli
+docker build -t clearmatics/ganache-cli-rnd .
+docker run -p 8545:8545 clearmatics/ganache-cli-rnd
 ```
-then:
-```Bash
-docker build -t trufflesuite/ganache-cli .
-docker run -p 8545:8545 trufflesuite/ganache-cli
-```
-or
-```Bash
-npm run docker
-```
-
-
-## Contributing to Ganache CLI
-
-The Ganache CLI repository contains the cli logic and Docker config/build only. It utilizes [ganache-core](https://github.com/trufflesuite/ganache-core), the core logic powering [Ganache](https://github.com/trufflesuite/ganache), internally.
-
-You can contribute to the core code at [ganache-core](https://github.com/trufflesuite/ganache-core).
-
-To contribue to ganache-cli, run:
-
-```Bash
-git clone https://github.com/trufflesuite/ganache-cli.git && cd ganache-cli
-npm install
-```
-
-You'll need Python 2.7 installed, and on Windows, you'll likely need to install [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) from an Administrator PowerShell Prompt via `npm install --global windows-build-tools`.
 
 # License
 [MIT](https://tldrlegal.com/license/mit-license)

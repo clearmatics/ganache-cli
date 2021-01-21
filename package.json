@@ -9,7 +9,6 @@
     "start": "node cli.js",
     "build": "webpack-cli --config ./webpack/webpack.node.config.js",
     "prepare": "npm run build",
-    "docker": "docker build -t trufflesuite/ganache-cli . && docker run -p 8545:8545 trufflesuite/ganache-cli",
     "otp": "node ./scripts/generate-otp.js",
     "releaseNotes": "npx semantic-release --dry-run"
   },
