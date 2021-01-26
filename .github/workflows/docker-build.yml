@@ -5,14 +5,11 @@ on:
     branches:
       - clearmatics-docker
 
-env:
-  REPO_OWNER: "clearmatics"
-
 jobs:
   docker-build:
     name: "Docker build and push"
     runs-on: ubuntu-20.04
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     strategy:
       matrix:
@@ -39,9 +36,10 @@ jobs:
       - name: "Buildx build"
         run: |
           docker buildx build \
-            --tag ghcr.io/$REPO_OWNER/ganache-cli:${{ matrix.app }}-git-${{ steps.git_vars.outputs.COMMIT_HASH }} \
-            --cache-from=type=registry,ref=ghcr.io/$REPO_OWNER/ganache-cli:${{ matrix.app }}-cache \
-            --cache-to=type=registry,ref=ghcr.io/$REPO_OWNER/ganache-cli:${{ matrix.app }}-cache \
+            --tag ghcr.io/$GITHUB_REPOSITORY:${{ matrix.app }}-git-${{ steps.git_vars.outputs.COMMIT_HASH }} \
+            --tag ghcr.io/$GITHUB_REPOSITORY:${{ matrix.app }}-latest \
+            --cache-from=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:${{ matrix.app }}-cache \
+            --cache-to=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:${{ matrix.app }}-cache \
             --platform linux/amd64 \
-            --output "type=image,push=false" \
+            --output "type=image,push=true" \
             --file ./Dockerfile ./
