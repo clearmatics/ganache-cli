@@ -1,5 +1,7 @@
 FROM mhart/alpine-node:10 as builder
 
+LABEL org.opencontainers.image.source https://github.com/clearmatics/ganache-cli
+
 RUN apk --update --no-cache add \
     make \
     gcc \

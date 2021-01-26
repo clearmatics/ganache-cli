@@ -1,0 +1,47 @@
+name: "Docker build"
+
+on:
+  push:
+    branches:
+      - clearmatics-docker
+
+env:
+  REPO_OWNER: "clearmatics"
+
+jobs:
+  docker-build:
+    name: "Docker build and push"
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+
+    strategy:
+      matrix:
+        app: ['rnd']
+      max-parallel: 1
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Configure Docker"
+        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: "Get vars from git"
+        id: git_vars
+        run: echo ::set-output name=COMMIT_HASH::$(git rev-parse --short HEAD)
+
+      - name: "Set up Buildx"
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          version: latest
+
+      - name: "Buildx build"
+        run: |
+          docker buildx build \
+            --tag ghcr.io/$REPO_OWNER/ganache-cli:${{ matrix.app }}-git-${{ steps.git_vars.outputs.COMMIT_HASH }} \
+            --cache-from=type=registry,ref=ghcr.io/$REPO_OWNER/ganache-cli:${{ matrix.app }}-cache \
+            --cache-to=type=registry,ref=ghcr.io/$REPO_OWNER/ganache-cli:${{ matrix.app }}-cache \
+            --platform linux/amd64 \
+            --output "type=image,push=false" \
+            --file ./Dockerfile ./
