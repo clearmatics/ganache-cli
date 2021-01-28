@@ -1,9 +1,9 @@
-name: "Docker build"
+name: "Docker build by tag vX.Y.Z-clearmatics"
 
 on:
   push:
-    branches:
-      - clearmatics-docker
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+-clearmatics # Triggered by git tags like: v0.2.12-clearmatics
 
 jobs:
   docker-build:
@@ -20,12 +20,12 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v2
 
-      - name: "Configure Docker"
-        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
-
       - name: "Get vars from git"
         id: git_vars
-        run: echo ::set-output name=COMMIT_HASH::$(git rev-parse --short HEAD)
+        run: echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+
+      - name: "Configure Docker"
+        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
       - name: "Set up Buildx"
         id: buildx
@@ -36,10 +36,10 @@ jobs:
       - name: "Buildx build"
         run: |
           docker buildx build \
-            --tag ghcr.io/$GITHUB_REPOSITORY:${{ matrix.app }}-git-${{ steps.git_vars.outputs.COMMIT_HASH }} \
-            --tag ghcr.io/$GITHUB_REPOSITORY:${{ matrix.app }}-latest \
-            --cache-from=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:${{ matrix.app }}-cache \
-            --cache-to=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:${{ matrix.app }}-cache \
+            --tag ghcr.io/$GITHUB_REPOSITORY:${{ steps.git_vars.outputs.COMMIT_TAG }} \
+            --tag ghcr.io/$GITHUB_REPOSITORY:latest \
+            --cache-from=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:cache \
+            --cache-to=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:cache \
             --platform linux/amd64 \
             --output "type=image,push=true" \
             --file ./Dockerfile ./
