@@ -1,4 +1,4 @@
-name: "Docker build by tag vX.Y.Z-clearmatics"
+name: "Docker build vX.Y.Z-clearmatics"
 
 on:
   push:
@@ -24,6 +24,10 @@ jobs:
         id: git_vars
         run: echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
 
+      - name: "Get vars from git"
+        id: git_vars
+        run: echo ::set-output name=COMMIT_HASH::$(git rev-parse --short HEAD)
+
       - name: "Configure Docker"
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
@@ -36,10 +40,24 @@ jobs:
       - name: "Buildx build"
         run: |
           docker buildx build \
-            --tag ghcr.io/$GITHUB_REPOSITORY:${{ steps.git_vars.outputs.TAG }} \
+            --tag ghcr.io/$GITHUB_REPOSITORY:git-${{ steps.git_vars.outputs.COMMIT_HASH }} \
             --tag ghcr.io/$GITHUB_REPOSITORY:latest \
             --cache-from=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:cache \
             --cache-to=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:cache \
             --platform linux/amd64 \
             --output "type=image,push=true" \
             --file ./Dockerfile ./
+
+      - name: "Run ganache service"
+        run: docker run -d -p 8545:8545 ghcr.io/$GITHUB_REPOSITORY:git-${{ steps.git_vars.outputs.COMMIT_HASH }}
+
+      - name: "Test RPC"
+        run: ./tests/rpc.sh http://127.0.0.1:8545
+
+      - name: "Tag and push latest image to registry"
+        run: |
+          docker tag ghcr.io/$GITHUB_REPOSITORY:git-${{ steps.git_vars.outputs.COMMIT_HASH }} ghcr.io/$GITHUB_REPOSITORY:${{ steps.git_vars.outputs.TAG }}
+          docker tag ghcr.io/$GITHUB_REPOSITORY:git-${{ steps.git_vars.outputs.COMMIT_HASH }} ghcr.io/$GITHUB_REPOSITORY:latest
+          docker push ghcr.io/$GITHUB_REPOSITORY:${{ steps.git_vars.outputs.TAG }}
+          docker push ghcr.io/$GITHUB_REPOSITORY:latest
+
