@@ -284,29 +284,31 @@ Special non-standard methods that aren’t included within the original RPC spec
 The Simplest way to get started with the Docker image:
 
 ```Bash
-docker run -d -p 8545:8545 clearmatics/ganache-cli-rnd:latest
+docker run -d -p 8545:8545 ghcr.io/clearmatics/ganache-cli:latest
 ```
 
 To pass options to ganache-cli through Docker simply add the arguments to
 the run command, e.g.:
 
 ```Bash
-docker run -d -p 8545:8545 clearmatics/ganache-cli-rnd:latest --hardfork istanbul --gasLimit 0x3FFFFFFFFFFFF --gasPrice 1 --defaultBalanceEther 9000000000
+docker run -d -p 8545:8545 ghcr.io/clearmatics/ganache-cli:latest --hardfork istanbul --gasLimit 0x3FFFFFFFFFFFF --gasPrice 1 --defaultBalanceEther 9000000000
 ```
 
 The Docker container adds an environment variable `DOCKER=true`; when this variable is set to `true` (case insensitive), `ganache-cli` use a default hostname IP of `0.0.0.0` instead of the normal default `127.0.0.1`. You can still specify a custom hostname however:
 
 ```Bash
-docker run -d -p 8545:8545 clearmatics/ganache-cli-rnd:latest -h XXX.XXX.XXX.XXX
+docker run -d -p 8545:8545 ghcr.io/clearmatics/ganache-cli:latest -h XXX.XXX.XXX.XXX
                                                               ^^^^^^^^^^^^^^^^^^
 ```
 
 To build and run the Docker container from source:
 
 ```Bash
-docker build -t clearmatics/ganache-cli-rnd .
-docker run -p 8545:8545 clearmatics/ganache-cli-rnd
+docker build -t ghcr.io/clearmatics/ganache-cli .
+docker run -p 8545:8545 ghcr.io/clearmatics/ganache-cli
 ```
+
+To trigger docker autobuild by GitHub Actions push release tag like "vX.Y.Z-clearmatics"
 
 # License
 [MIT](https://tldrlegal.com/license/mit-license)
