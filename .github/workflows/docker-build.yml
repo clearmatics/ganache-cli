@@ -35,18 +35,17 @@ jobs:
         with:
           version: latest
 
-      - name: "Buildx build"
+      - name: "Build and push image git-SHA"
         run: |
           docker buildx build \
             --tag ghcr.io/$GITHUB_REPOSITORY:git-${{ steps.git_vars.outputs.COMMIT_HASH }} \
-            --tag ghcr.io/$GITHUB_REPOSITORY:latest \
             --cache-from=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:cache \
             --cache-to=type=registry,ref=ghcr.io/$GITHUB_REPOSITORY:cache \
             --platform linux/amd64 \
             --output "type=image,push=true" \
             --file ./Dockerfile ./
 
-      - name: "Run ganache service"
+      - name: "Run service git-SHA for tests"
         run: docker run -d -p 8545:8545 ghcr.io/$GITHUB_REPOSITORY:git-${{ steps.git_vars.outputs.COMMIT_HASH }}
 
       - name: "Test RPC"
@@ -58,4 +57,3 @@ jobs:
           docker tag ghcr.io/$GITHUB_REPOSITORY:git-${{ steps.git_vars.outputs.COMMIT_HASH }} ghcr.io/$GITHUB_REPOSITORY:latest
           docker push ghcr.io/$GITHUB_REPOSITORY:${{ steps.git_vars.outputs.TAG }}
           docker push ghcr.io/$GITHUB_REPOSITORY:latest
-
